@@ -2,10 +2,9 @@ package com.proyectoSanBau.modelos.servicios;
 
 
 import com.proyectoSanBau.modelos.entidades.Categoria;
-import com.proyectoSanBau.modelos.entidades.Cliente;
 import com.proyectoSanBau.modelos.entidades.Ilustracion;
 
-import java.util.List;
+
 import java.util.Set;
 
 public interface IIlustracionService {

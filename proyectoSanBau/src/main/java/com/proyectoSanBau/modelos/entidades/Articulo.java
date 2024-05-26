@@ -23,15 +23,11 @@ public class Articulo implements Serializable {
     private String titulo;
     @NotEmpty(message = "no puede estar vacío")
     @Size(min=10, max=200, message = "el tamaño tiene que estar entre 10 y 200 caracteres")
-    private String descripción;
-    @NotEmpty(message = "no puede estar vacío")
-    private int stock;
-    @NotEmpty(message = "no puede estar vacío")
+    private String descripcion;
+
     private float precio;
     @NotEmpty(message = "no puede estar vacío")
     private String imagen;
-
-    private Categoria categoria;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -51,6 +47,56 @@ public class Articulo implements Serializable {
     @JsonIgnoreProperties("articulos")
     private List<Formato> formatos;
 
+    //METODOS GET/SET
+    public Long getId() {
+        return id;
+    }
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getTitulo() {
+        return titulo;
+    }
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
+    }
 
 
+    public float getPrecio() {
+        return precio;
+    }
+    public void setPrecio(float precio) {
+        this.precio = precio;
+    }
+
+
+    public String getImagen() {
+        return imagen;
+    }
+    public void setImagen(String imagen) {
+        this.imagen = imagen;
+    }
+
+
+    public List<Categoria> getCategorias() {
+        return categorias;
+    }
+    public void setCategorias(List<Categoria> categorias) {
+        this.categorias = categorias;
+    }
+
+    public List<Formato> getFormatos() {
+        return formatos;
+    }
+    public void setFormatos(List<Formato> formatos) {
+        this.formatos = formatos;
+    }
 }

@@ -61,7 +61,7 @@ public class GaleriaController {
                     ilustracionNueva = ilustracionService.saveIlustracion(ilu);
                 }catch (IOException e){
                     response.put("mensaje", "Error al subir la imagen " + nombreArchivo);
-                    response.put("error",e.getMessage());
+                    response.put("errors",e.getMessage());
                     return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
                 }
             }
@@ -132,7 +132,7 @@ public class GaleriaController {
 
             ilustracionService.deleteIlu(id);
         }catch(DataAccessException e){
-            response.put("mensaje", "Error al eliminar ilustració en la base de datos");
+            response.put("mensaje", "Error al eliminar ilustración en la base de datos");
             response.put("error",e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
