@@ -5,6 +5,7 @@ import com.proyectoSanBau.modelos.entidades.Categoria;
 import com.proyectoSanBau.modelos.entidades.Ilustracion;
 
 
+import java.util.List;
 import java.util.Set;
 
 public interface IIlustracionService {
@@ -18,4 +19,6 @@ public interface IIlustracionService {
     public Ilustracion findByIdIlustracion(Long id);
 
     Set<Categoria> findAllCategorias();
+
+    List<String> validarIlustracion(Ilustracion ilustracion);
 }

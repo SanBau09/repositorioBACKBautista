@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -47,5 +48,17 @@ public class IlustracionServiceImp implements IIlustracionService{
     @Override
     @Transactional(readOnly = true)
     public Set<Categoria> findAllCategorias() {return ilustracionDao.findAllCategorias();
+    }
+
+    @Override
+    public List<String> validarIlustracion(Ilustracion ilustracion){
+        List<String> listaErrores = new ArrayList<>();
+        if (ilustracion.getTitulo() == null || ilustracion.getTitulo() == ""){
+            listaErrores.add("El campo Título está vacío" );
+        }else if (ilustracion.getTitulo().length() < 4){
+            listaErrores.add("El campo Título debe tener al menos 4 letras" );
+        }
+
+        return listaErrores;
     }
 }

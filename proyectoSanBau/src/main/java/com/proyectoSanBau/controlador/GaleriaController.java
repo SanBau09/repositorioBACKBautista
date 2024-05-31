@@ -9,9 +9,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.dao.DataAccessException;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -55,10 +53,17 @@ public class GaleriaController {
                 ObjectMapper mapper = new ObjectMapper();
                 try{
                     Ilustracion ilu = mapper.readValue(ilustracion, Ilustracion.class);
-                    nombreArchivo = uploadService.copiar(archivo);
-
-                    ilu.setImagen(nombreArchivo);
-                    ilustracionNueva = ilustracionService.saveIlustracion(ilu);
+                    List<String> errors = ilustracionService.validarIlustracion(ilu);
+                    if (errors.stream().count() > 0)
+                    {
+                        response.put("errors", errors);
+                        return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
+                    }
+                    else {
+                        nombreArchivo = uploadService.copiar(archivo);
+                        ilu.setImagen(nombreArchivo);
+                        ilustracionNueva = ilustracionService.saveIlustracion(ilu);
+                    }
                 }catch (IOException e){
                     response.put("mensaje", "Error al subir la imagen " + nombreArchivo);
                     response.put("errors",e.getMessage());
@@ -68,7 +73,7 @@ public class GaleriaController {
 
         }catch(DataAccessException e){
             response.put("mensaje", "Error al insertar nueva ilustración en la base de datos");
-            response.put("error",e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put("errors",e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -110,7 +115,7 @@ public class GaleriaController {
 
         }catch(DataAccessException e){
             response.put("mensaje", "Error al actualizar ilustración en la base de datos");
-            response.put("error",e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put("errors",e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
@@ -133,7 +138,7 @@ public class GaleriaController {
             ilustracionService.deleteIlu(id);
         }catch(DataAccessException e){
             response.put("mensaje", "Error al eliminar ilustración en la base de datos");
-            response.put("error",e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put("errors",e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
         response.put("mensaje", "La ilustración se ha eliminado con éxito");
@@ -154,7 +159,7 @@ public class GaleriaController {
                 nombreArchivo = uploadService.copiar(archivo);
             }catch (IOException e){
                 response.put("mensaje", "Error al subir la imagen " + nombreArchivo);
-                response.put("error",e.getMessage());
+                response.put("errors",e.getMessage());
                 return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
             }
             //para reemlazar la foto anterior por la nueva
@@ -211,7 +216,7 @@ public class GaleriaController {
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
         } catch (DataAccessException e) {
             response.put("mensaje", "Error al insertar la categoría en la base de datos");
-            response.put("error", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            response.put("errors", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
             return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

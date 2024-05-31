@@ -33,4 +33,16 @@ public class ArticuloServiceImp implements IArticuloService{
     @Transactional(readOnly = true)
     public Set<Categoria> findAllCategorias() {return articuloDao.findAllCategorias();
     }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Articulo findByIdArticulo(Long id) {
+        return articuloDao.findById(id).orElse(null);
+    }
+
+    @Transactional
+    @Override
+    public void deleteArt(Long id) {
+        articuloDao.deleteById(id);
+    }
 }

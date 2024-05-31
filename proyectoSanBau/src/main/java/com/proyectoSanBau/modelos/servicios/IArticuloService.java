@@ -14,4 +14,8 @@ public interface IArticuloService {
     public List<Articulo> findAll();
 
     Set<Categoria> findAllCategorias();
+
+    public Articulo findByIdArticulo(Long id);
+
+    public void deleteArt(Long id);
 }
