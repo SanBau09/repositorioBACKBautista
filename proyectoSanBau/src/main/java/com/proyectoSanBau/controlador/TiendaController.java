@@ -150,6 +150,40 @@ public class TiendaController {
         return categorias;
     }
 
+    @Secured({"ROLE_ADMIN","ROLE_USER"})
+    @PostMapping("articulos/upload")
+    public ResponseEntity<?> upload(@RequestParam("archivo")MultipartFile archivo, @RequestParam("id") Long id){
+        Map<String, Object> response = new HashMap<>();
+
+        Articulo articulo = articuloService.findByIdArticulo(id);
+
+        if(!archivo.isEmpty()){
+            String nombreArchivo = null;
+
+            try{
+                nombreArchivo = uploadService.copiar(archivo);
+            }catch (IOException e){
+                response.put("mensaje", "Error al subir la imagen " + nombreArchivo);
+                response.put("errors",e.getMessage());
+                return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+            //para reemlazar la foto anterior por la nueva
+            String nombreFotoAnterior = articulo.getImagen();
+
+            uploadService.eliminar(nombreFotoAnterior);
+
+            articulo.setImagen(nombreArchivo);
+
+            articuloService.saveArticulo(articulo);
+
+            response.put("articulo", articulo);
+            response.put("mensaje", "Has subido correctamente la imagen: " + nombreArchivo);
+
+        }
+
+        return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
+    }
+
     @GetMapping("/uploads/img/{nombreFoto:.+}")
     public ResponseEntity<Resource> verFoto(@PathVariable String nombreFoto){
 
