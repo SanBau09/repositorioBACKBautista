@@ -1,6 +1,8 @@
 package com.proyectoSanBau.modelos.servicios;
 
 import com.proyectoSanBau.modelos.dao.IUsuarioDao;
+import com.proyectoSanBau.modelos.entidades.Cliente;
+import com.proyectoSanBau.modelos.entidades.Pais;
 import com.proyectoSanBau.modelos.entidades.Usuario;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,5 +61,27 @@ public class UsuarioServiceImp implements UserDetailsService, IUsuarioService {
     @Transactional(readOnly = true)
     public Usuario findByUsername(String username) {
         return usuarioDao.findByUsername(username);
+    }
+
+    @Override
+    @Transactional
+    public Usuario saveUsuario(Usuario usuario) {
+        return usuarioDao.save(usuario);
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return usuarioDao.existsByEmail(email);
+    }
+
+    @Override
+    public boolean existsByUsername(String username) {
+        return usuarioDao.existsByUsername(username);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Pais> findAllPaises() {
+        return usuarioDao.findAllPaises();
     }
 }
