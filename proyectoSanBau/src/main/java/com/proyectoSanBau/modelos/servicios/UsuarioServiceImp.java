@@ -64,6 +64,12 @@ public class UsuarioServiceImp implements UserDetailsService, IUsuarioService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public Usuario findByIdUsuario(Long id) {
+        return usuarioDao.findById(id).orElse(null);
+    }
+
+    @Override
     @Transactional
     public Usuario saveUsuario(Usuario usuario) {
         return usuarioDao.save(usuario);

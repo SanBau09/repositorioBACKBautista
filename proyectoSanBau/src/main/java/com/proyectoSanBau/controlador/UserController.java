@@ -1,6 +1,7 @@
 package com.proyectoSanBau.controlador;
 
 
+import com.proyectoSanBau.modelos.entidades.Cliente;
 import com.proyectoSanBau.modelos.entidades.Pais;
 import com.proyectoSanBau.modelos.entidades.Rol;
 import com.proyectoSanBau.modelos.entidades.Usuario;
@@ -88,6 +89,99 @@ public class UserController {
     @GetMapping("paises")
     public List<Pais> listarPaises(){
         return usuarioService.findAllPaises();
+    }
+
+    @Secured({"ROLE_USER"})
+    @GetMapping("{id}")
+    public ResponseEntity<?> show(@PathVariable Long id){
+
+        Usuario usuario = null;
+        Map<String, Object> response = new HashMap<>();
+
+        try{
+            usuario = usuarioService.findByIdUsuario(id);
+        }catch(DataAccessException e){
+            response.put("mensaje", "Error al lanzar la consulta en la base de datos");
+            response.put("error",e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        if(usuario == null){
+            response.put("mensaje", "El usuario ID: ".concat(id.toString().concat(" no existe en la base de datos")));
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<Usuario>(usuario, HttpStatus.OK);
+    }
+
+    @Secured({"ROLE_USER"})
+    @GetMapping("user/{username}")
+    public ResponseEntity<?> show(@PathVariable String username){
+
+        Usuario usuario = null;
+        Map<String, Object> response = new HashMap<>();
+
+        try{
+            usuario = usuarioService.findByUsername(username);
+        }catch(DataAccessException e){
+            response.put("mensaje", "Error al lanzar la consulta en la base de datos");
+            response.put("error",e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        if(usuario == null){
+            response.put("mensaje", "El usuario USERNAME: ".concat(username.concat(" no existe en la base de datos")));
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<Usuario>(usuario, HttpStatus.OK);
+    }
+
+    @Secured("ROLE_USER")
+    @PutMapping("{id}")
+    public ResponseEntity<?> update(@Valid @RequestBody Usuario usuario,BindingResult result, @PathVariable Long id){
+
+        Usuario usuarioActual = usuarioService.findByIdUsuario(id);
+        Usuario usuarioUpdate = null;
+
+        Map<String, Object> response = new HashMap<>();
+
+        //manejo de errores para la validación
+        if(result.hasErrors()){
+            List<String> errors = result.getFieldErrors()
+                    .stream()
+                    .map(err -> "El campo " + err.getField() + " " + err.getDefaultMessage())
+                    .collect(Collectors.toList());
+
+            response.put("errors", errors);
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.BAD_REQUEST);
+        }
+
+        if(usuarioActual == null){
+            response.put("mensaje", "Error: no se puedo editar, el usuario ID: ".concat(id.toString().concat(" no existe en la base de datos")));
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.NOT_FOUND);
+        }
+
+        try{
+            usuarioActual.setNombre(usuario.getNombre());
+            usuarioActual.setApellidos(usuario.getApellidos());
+            usuarioActual.setTelefono(usuario.getTelefono());
+            usuarioActual.setCP(usuario.getCP());
+            usuarioActual.setDireccion(usuario.getDireccion());
+            usuarioActual.setProvincia(usuario.getProvincia());
+            usuarioActual.setLocalidad(usuario.getLocalidad());
+            usuarioActual.setPais(usuario.getPais());
+
+            usuarioUpdate = usuarioService.saveUsuario(usuarioActual);
+        }catch(DataAccessException e){
+            response.put("mensaje", "Error al actualizar usuario en la base de datos");
+            response.put("error",e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        response.put("mensaje", "El usuario ha sido actualizado con éxito");
+        response.put("usuario", usuarioUpdate);
+        return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
     }
 
 }

@@ -2,8 +2,9 @@ package com.proyectoSanBau.controlador;
 
 import com.proyectoSanBau.modelos.entidades.Articulo;
 import com.proyectoSanBau.modelos.entidades.Categoria;
-import com.proyectoSanBau.modelos.entidades.Ilustracion;
+import com.proyectoSanBau.modelos.entidades.Formato;
 import com.proyectoSanBau.modelos.servicios.IArticuloService;
+import com.proyectoSanBau.modelos.servicios.IFormatoService;
 import com.proyectoSanBau.modelos.servicios.IUploadFileService;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,9 @@ public class TiendaController {
     private IArticuloService articuloService;
     @Autowired
     private IUploadFileService uploadService;
+
+    @Autowired
+    private IFormatoService formatoService;
 
 
     @GetMapping("/articulos")
@@ -199,6 +203,30 @@ public class TiendaController {
         cabecera.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + recurso.getFilename() + "\"");
 
         return new ResponseEntity<Resource>(recurso, cabecera, HttpStatus.OK);
+    }
+
+    @Secured("ROLE_ADMIN")
+    @PostMapping("/formatos")
+    public ResponseEntity<?> createFormato(@RequestBody Formato formato){
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            Formato nuevoFormato = formatoService.saveFormato(formato);
+            response.put("mensaje", "El formato ha sido creado con éxito");
+            response.put("formato", nuevoFormato);
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
+        } catch (DataAccessException e) {
+            response.put("mensaje", "Error al insertar el formato en la base de datos");
+            response.put("errors", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/formatos")
+    public List<Formato> listarFormatos(){
+        List<Formato> formatos = formatoService.findAll();
+
+        return formatos;
     }
 
 }

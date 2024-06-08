@@ -17,4 +17,7 @@ public interface IUsuarioService {
 
     public List<Pais> findAllPaises();
 
+    public Usuario findByIdUsuario(Long id);
+
+
 }
