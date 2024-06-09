@@ -64,7 +64,12 @@ public class Usuario implements Serializable {
     private Date fechaRegistro;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @JsonIgnoreProperties("usuario")
     private List<Rol> roles;
+
+    @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @JsonIgnoreProperties("usuario")
+    private List<Venta> ventas;
 
 
     //METODOS GET/SET
@@ -171,5 +176,12 @@ public class Usuario implements Serializable {
     }
     public void setFechaRegistro(Date fechaRegistro) {
         this.fechaRegistro = fechaRegistro;
+    }
+
+    public List<Venta> getVentas() {
+        return ventas;
+    }
+    public void setVentas(List<Venta> ventas) {
+        this.ventas = ventas;
     }
 }

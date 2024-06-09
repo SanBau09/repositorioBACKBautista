@@ -1,11 +1,7 @@
 package com.proyectoSanBau.controlador;
 
-import com.proyectoSanBau.modelos.entidades.Articulo;
-import com.proyectoSanBau.modelos.entidades.Categoria;
-import com.proyectoSanBau.modelos.entidades.Formato;
-import com.proyectoSanBau.modelos.servicios.IArticuloService;
-import com.proyectoSanBau.modelos.servicios.IFormatoService;
-import com.proyectoSanBau.modelos.servicios.IUploadFileService;
+import com.proyectoSanBau.modelos.entidades.*;
+import com.proyectoSanBau.modelos.servicios.*;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -21,10 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @CrossOrigin(origins = {"*"})
@@ -39,6 +32,12 @@ public class TiendaController {
 
     @Autowired
     private IFormatoService formatoService;
+
+    @Autowired
+    private IVentaService ventaService;
+
+    @Autowired
+    private IUsuarioService usuarioService;
 
 
     @GetMapping("/articulos")
@@ -227,6 +226,32 @@ public class TiendaController {
         List<Formato> formatos = formatoService.findAll();
 
         return formatos;
+    }
+
+    @Secured("ROLE_USER")
+    @PostMapping("/venta")
+    public ResponseEntity<?> createVenta(@RequestBody Venta venta){
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            venta.setFechaVenta(new Date());
+
+            Venta nuevaVenta = ventaService.saveVenta(venta);
+            response.put("mensaje", "Venta ha sido realizada con éxito");
+            response.put("venta", nuevaVenta);
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
+        } catch (DataAccessException e) {
+            response.put("mensaje", "Error al insertar la venta en la base de datos");
+            response.put("errors", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/venta")
+    public List<Venta> listarVentas(){
+        List<Venta> ventas = ventaService.findAll();
+
+        return ventas;
     }
 
 }
