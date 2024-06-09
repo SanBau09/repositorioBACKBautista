@@ -247,7 +247,8 @@ public class TiendaController {
         }
     }
 
-    @GetMapping("/venta")
+    @Secured("ROLE_ADMIN")
+    @GetMapping("/ventas")
     public List<Venta> listarVentas(){
         List<Venta> ventas = ventaService.findAll();
 

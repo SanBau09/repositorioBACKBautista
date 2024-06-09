@@ -19,7 +19,7 @@ public class Venta implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "id_usuario")
-    @JsonIgnoreProperties("ventas")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "ventas"})
     private Usuario usuario;
 
     @Temporal(TemporalType.DATE)
