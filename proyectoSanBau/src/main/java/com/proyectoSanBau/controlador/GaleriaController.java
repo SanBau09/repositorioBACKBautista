@@ -221,5 +221,21 @@ public class GaleriaController {
         }
     }
 
+    @Secured("ROLE_ADMIN")
+    @DeleteMapping("/categorias/{id}")
+    public ResponseEntity<?> deleteCat(@PathVariable Long id) {
+        Map<String, Object> response = new HashMap<>();
+
+        try {
+            categoriaService.deleteCategoria(id);
+            response.put("mensaje", "La categoría ha sido eliminada con éxito");
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
+        } catch (DataAccessException e) {
+            response.put("mensaje", "Error al eliminar la categoría en la base de datos");
+            response.put("errors", e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
 }

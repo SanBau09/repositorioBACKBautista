@@ -16,4 +16,10 @@ public class CategoriaServiceImp implements ICategoriaService{
     @Override
     @Transactional
     public Categoria saveCategoria(Categoria categoria) {return categoriaDao.save(categoria);}
+
+    @Override
+    @Transactional
+    public void deleteCategoria(Long id) {
+        categoriaDao.deleteById(id);
+    }
 }
