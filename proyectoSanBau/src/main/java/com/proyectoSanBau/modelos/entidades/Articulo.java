@@ -47,6 +47,10 @@ public class Articulo implements Serializable {
     @JsonIgnoreProperties("articulos")
     private List<Formato> formatos;
 
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @JsonIgnoreProperties("articulos")
+    private List<Venta> ventas;
+
     //METODOS GET/SET
     public Long getId() {
         return id;
@@ -98,5 +102,12 @@ public class Articulo implements Serializable {
     }
     public void setFormatos(List<Formato> formatos) {
         this.formatos = formatos;
+    }
+
+    public List<Venta> getVentas() {
+        return ventas;
+    }
+    public void setVentas(List<Venta> ventas) {
+        this.ventas = ventas;
     }
 }
