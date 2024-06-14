@@ -35,12 +35,24 @@ public class GaleriaController {
     @Autowired
     private IUploadFileService uploadService;
 
-
+    /**
+     * Obtiene todas las ilustraciones disponibles.
+     *
+     * @return Conjunto de ilustraciones encontradas.
+     */
     @GetMapping("/ilustraciones")
     public Set<Ilustracion> index(){
         return ilustracionService.findAll();
     }
 
+    /**
+     * Crea una nueva ilustración a partir de un archivo y datos de ilustración recibidos.
+     * El método está asegurado con el rol ROLE_ADMIN.
+     *
+     * @param archivo     Archivo de imagen de la ilustración a subir.
+     * @param ilustracion Datos de la ilustración en formato JSON.
+     * @return ResponseEntity con un mensaje de éxito y la ilustración creada, o errores en caso de fallo.
+     */
     @Secured("ROLE_ADMIN")
     @PostMapping(value = "/ilustraciones", consumes = {"multipart/form-data"})
     public ResponseEntity<?> create(@RequestParam("archivo") MultipartFile archivo, @RequestParam("ilustracion") String ilustracion){
@@ -82,6 +94,14 @@ public class GaleriaController {
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
     }
 
+    /**
+     * Actualiza una ilustración existente identificada por su ID.
+     *
+     * @param ilustracion La ilustración con los nuevos datos a actualizar.
+     * @param result      Resultado de la validación de la ilustración.
+     * @param id          ID de la ilustración a actualizar.
+     * @return ResponseEntity con un mensaje de éxito y la ilustración actualizada, o errores en caso de falla.
+     */
     @Secured("ROLE_ADMIN")
     @PutMapping("/ilustraciones/{id}")
     public ResponseEntity<?> update(@Valid @RequestBody Ilustracion ilustracion, BindingResult result, @PathVariable Long id){
@@ -124,6 +144,12 @@ public class GaleriaController {
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
     }
 
+    /**
+     * Elimina una ilustración existente identificada por su ID, incluyendo su foto asociada si existe.
+     *
+     * @param id ID de la ilustración a eliminar.
+     * @return ResponseEntity con un mensaje de éxito tras la eliminación, o errores en caso de fallo.
+     */
     @Secured("ROLE_ADMIN")
     @DeleteMapping("/ilustraciones/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id){
@@ -145,6 +171,13 @@ public class GaleriaController {
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
     }
 
+    /**
+     * Sube y actualiza la imagen de una ilustración existente identificada por su ID.
+     *
+     * @param archivo Archivo de imagen a subir.
+     * @param id      ID de la ilustración a la cual se le actualizará la imagen.
+     * @return ResponseEntity con la ilustración actualizada y un mensaje de éxito, o errores en caso de fallo.
+     */
     @Secured({"ROLE_ADMIN","ROLE_USER"})
     @PostMapping("ilustraciones/upload")
     public ResponseEntity<?> upload(@RequestParam("archivo")MultipartFile archivo, @RequestParam("id") Long id){
@@ -179,6 +212,12 @@ public class GaleriaController {
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
     }
 
+    /**
+     * Retorna la foto con el nombre especificado desde el servicio de carga.
+     *
+     * @param nombreFoto Nombre de la foto a recuperar.
+     * @return ResponseEntity con el recurso de la foto y cabeceras adecuadas, o error si no se puede cargar la foto.
+     */
     @GetMapping("/uploads/img/{nombreFoto:.+}")
     public ResponseEntity<Resource> verFoto(@PathVariable String nombreFoto){
 
@@ -196,7 +235,11 @@ public class GaleriaController {
         return new ResponseEntity<Resource>(recurso, cabecera, HttpStatus.OK);
     }
 
-
+    /**
+     * Retorna un conjunto de todas las categorías disponibles.
+     *
+     * @return Set de objetos Categoria que representan todas las categorías disponibles.
+     */
     @GetMapping("/categorias")
     public Set<Categoria> listarCategorias(){
         Set<Categoria> categorias = ilustracionService.findAllCategorias();
@@ -204,6 +247,13 @@ public class GaleriaController {
         return categorias;
     }
 
+    /**
+     * Crea una nueva categoría en el sistema.
+     *
+     * @param categoria Objeto Categoria que representa la nueva categoría a ser creada.
+     * @return ResponseEntity<Map<String, Object>> ResponseEntity que contiene un mapa con el mensaje de éxito
+     *         y la categoría creada en caso de éxito, o un mensaje de error en caso de fallo.
+     */
     @Secured("ROLE_ADMIN")
     @PostMapping("/categorias")
     public ResponseEntity<?> createCat(@RequestBody Categoria categoria){
@@ -221,6 +271,13 @@ public class GaleriaController {
         }
     }
 
+    /**
+     * Elimina una categoría existente del sistema.
+     *
+     * @param id Identificador único de la categoría a ser eliminada.
+     * @return ResponseEntity<Map<String, Object>> ResponseEntity que contiene un mapa con el mensaje de éxito
+     *         en caso de éxito, o un mensaje de error en caso de fallo.
+     */
     @Secured("ROLE_ADMIN")
     @DeleteMapping("/categorias/{id}")
     public ResponseEntity<?> deleteCat(@PathVariable Long id) {
