@@ -15,10 +15,19 @@ import org.springframework.web.filter.CorsFilter;
 
 import java.util.Arrays;
 
+/**
+ * Configuración del servidor de recursos.
+ * Define políticas de seguridad y configuración de CORS para la aplicación.
+ */
 @Configuration
 @EnableResourceServer
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
+    /**
+     * Configura la seguridad HTTP, define qué rutas están permitidas y cuáles requieren autenticación.
+     * @param http objeto HttpSecurity para configurar las políticas de seguridad.
+     * @throws Exception en caso de error en la configuración de seguridad.
+     */
     @Override
     public void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests().antMatchers(HttpMethod.GET, "/api/clientes","/galeria/ilustraciones","/galeria/categorias","/tienda/articulos", "/tienda/categorias", "/api/clientes/page/**",
@@ -33,6 +42,10 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
     }
 
+    /**
+     * Configura la política de CORS para permitir solicitudes desde el origen http://localhost:4200.
+     * @return una instancia de CorsConfigurationSource con la configuración CORS definida.
+     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource(){
         CorsConfiguration config = new CorsConfiguration();
@@ -47,6 +60,10 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
         return source;
     }
 
+    /**
+     * Registra el filtro CORS con la configuración más alta de precedencia.
+     * @return una instancia de FilterRegistrationBean que contiene el filtro CORS configurado.
+     */
     @Bean
     public FilterRegistrationBean<CorsFilter> corsFilter(){
         FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<CorsFilter>(new CorsFilter(corsConfigurationSource()));

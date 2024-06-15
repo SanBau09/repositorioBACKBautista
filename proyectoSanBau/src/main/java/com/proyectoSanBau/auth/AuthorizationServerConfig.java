@@ -31,12 +31,24 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Autowired
     private InfoAditionalToken infoAditionalToken;
 
+    /**
+     * Configura la seguridad del servidor de autorización.
+     *
+     * @param security el configurador de seguridad del servidor de autorización
+     * @throws Exception en caso de error en la configuración
+     */
     @Override
     public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
         security.tokenKeyAccess("permitAll()")
                 .checkTokenAccess("isAuthenticated()");
     }
 
+    /**
+     * Configura los detalles del cliente.
+     *
+     * @param clients el configurador de detalles del cliente
+     * @throws Exception en caso de error en la configuración
+     */
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.inMemory().withClient("angularApp")
@@ -47,6 +59,12 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 .refreshTokenValiditySeconds(7200);
     }
 
+    /**
+     * Configura los endpoints del servidor de autorización.
+     *
+     * @param endpoints el configurador de endpoints del servidor de autorización
+     * @throws Exception en caso de error en la configuración
+     */
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
@@ -58,11 +76,21 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                 .tokenEnhancer(tokenEnhancerChain);
     }
 
+    /**
+     * Define un bean de JwtTokenStore que utiliza el convertidor de tokens JWT.
+     *
+     * @return una instancia de JwtTokenStore
+     */
     @Bean
     public JwtTokenStore tokenStore() {
         return new JwtTokenStore(accesTokenConverter());
     }
 
+    /**
+     * Define un bean de JwtAccessTokenConverter con la clave de firma configurada.
+     *
+     * @return una instancia de JwtAccessTokenConverter
+     */
     @Bean
     public JwtAccessTokenConverter accesTokenConverter() {
         JwtAccessTokenConverter jwtAccessTokenConverter = new JwtAccessTokenConverter();

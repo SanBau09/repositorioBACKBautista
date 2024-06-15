@@ -18,6 +18,13 @@ public class InfoAditionalToken implements TokenEnhancer {
     @Autowired
     private IUsuarioService usuarioService;
 
+    /**
+     * Agrega información adicional al token OAuth2.
+     *
+     * @param accessToken el token de acceso OAuth2
+     * @param authentication la autenticación OAuth2
+     * @return el token de acceso OAuth2 con información adicional
+     */
     @Override
     public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
 
