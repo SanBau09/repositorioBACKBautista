@@ -29,6 +29,8 @@ public class Articulo implements Serializable {
     @NotEmpty(message = "no puede estar vacío")
     private String imagen;
 
+    private boolean esActivo;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "articulo_categoria",
@@ -109,5 +111,13 @@ public class Articulo implements Serializable {
     }
     public void setVentas(List<Venta> ventas) {
         this.ventas = ventas;
+    }
+
+    public boolean isEsActivo() {
+        return esActivo;
+    }
+
+    public void setEsActivo(boolean esActivo) {
+        this.esActivo = esActivo;
     }
 }

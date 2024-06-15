@@ -12,4 +12,6 @@ public interface IFormatoService {
     public Formato saveFormato(Formato formato);
 
     public List<Formato> findAll();
+
+    public void deleteFormato(Long id);
 }

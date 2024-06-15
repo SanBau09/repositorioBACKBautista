@@ -60,6 +60,7 @@ public class TiendaController {
                     nombreArchivo = uploadService.copiar(archivo);
 
                     art.setImagen(nombreArchivo);
+                    art.setEsActivo(true);
                     articuloNuevo = articuloService.saveArticulo(art);
                 }catch (IOException e){
                     response.put("mensaje", "Error al subir la imagen " + nombreArchivo);
@@ -132,9 +133,6 @@ public class TiendaController {
 
         try{//si el articulo tiene una foto la elimina tb
             Articulo articulo = articuloService.findByIdArticulo(id);
-            String nombreFotoAnterior = articulo.getImagen();
-
-            uploadService.eliminar(nombreFotoAnterior);
 
             articuloService.deleteArt(id);
         }catch(DataAccessException e){
@@ -226,6 +224,22 @@ public class TiendaController {
         List<Formato> formatos = formatoService.findAll();
 
         return formatos;
+    }
+
+    @Secured("ROLE_ADMIN")
+    @DeleteMapping("/formatos/{id}")
+    public ResponseEntity<?> deleteFormato(@PathVariable Long id){
+        Map<String, Object> response = new HashMap<>();
+
+        try{
+            formatoService.deleteFormato(id);
+        }catch(DataAccessException e){
+            response.put("mensaje", "Error al eliminar formato en la base de datos");
+            response.put("errors",e.getMessage().concat(": ").concat(e.getMostSpecificCause().getMessage()));
+            return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        response.put("mensaje", "El formato se ha eliminado con éxito");
+        return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
     }
 
     @Secured("ROLE_USER")

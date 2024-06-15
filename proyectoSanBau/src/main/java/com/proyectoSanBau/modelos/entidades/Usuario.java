@@ -48,7 +48,7 @@ public class Usuario implements Serializable {
     private String provincia;
 
     @NotNull(message = "el país no puede estar vacío")
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name="paisId")
     @JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
     private Pais pais;

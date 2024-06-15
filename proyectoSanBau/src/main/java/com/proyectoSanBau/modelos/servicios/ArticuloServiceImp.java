@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Set;
 
+import static java.util.stream.Collectors.toList;
+
 @Service
 public class ArticuloServiceImp implements IArticuloService{
 
@@ -26,7 +28,8 @@ public class ArticuloServiceImp implements IArticuloService{
     @Override
     @Transactional(readOnly = true)
     public List<Articulo> findAll() {
-        return (List<Articulo>) articuloDao.findAll();
+        return (List<Articulo>) articuloDao.findAll().stream().filter(x -> x.isEsActivo())
+                .collect(toList());
     }
 
     @Override
@@ -43,6 +46,8 @@ public class ArticuloServiceImp implements IArticuloService{
     @Transactional
     @Override
     public void deleteArt(Long id) {
-        articuloDao.deleteById(id);
+        Articulo articulo = this.findByIdArticulo(id);
+        articulo.setEsActivo(false);
+        this.saveArticulo(articulo);
     }
 }

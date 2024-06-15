@@ -30,4 +30,10 @@ public class FormatoServiceImp implements IFormatoService {
         return list;
     }
 
+    @Override
+    @Transactional
+    public void deleteFormato(Long id) {
+        formatoDao.deleteById(id);
+    }
+
 }
