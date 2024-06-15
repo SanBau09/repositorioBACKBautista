@@ -20,6 +20,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 
+/**
+ * Controlador REST para manejar las operaciones relacionadas con los usuarios.
+ */
 @CrossOrigin(origins = {"*"})  //permite que cualquier dominio acceda a los recursos del backend sin restricciones de CORS.
 @RestController
 @RequestMapping("/users")
@@ -31,6 +34,13 @@ public class UserController {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
+    /**
+     * Registra un nuevo usuario en el sistema.
+     *
+     * @param usuario El usuario a registrar.
+     * @param result  Resultado de la validación.
+     * @return ResponseEntity con el resultado de la operación.
+     */
     @PostMapping("registro")
     public ResponseEntity<?> create(@Valid @RequestBody Usuario usuario, BindingResult result){
         Usuario usuarioNuevo = null;
@@ -86,11 +96,22 @@ public class UserController {
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
     }
 
+    /**
+     * Lista todos los países disponibles.
+     *
+     * @return Lista de países.
+     */
     @GetMapping("paises")
     public List<Pais> listarPaises(){
         return usuarioService.findAllPaises();
     }
 
+    /**
+     * Obtiene la información de un usuario por ID.
+     *
+     * @param id El ID del usuario.
+     * @return ResponseEntity con la información del usuario.
+     */
     @Secured({"ROLE_USER"})
     @GetMapping("{id}")
     public ResponseEntity<?> show(@PathVariable Long id){
@@ -114,6 +135,12 @@ public class UserController {
         return new ResponseEntity<Usuario>(usuario, HttpStatus.OK);
     }
 
+    /**
+     * Obtiene la información de un usuario por nombre de usuario.
+     *
+     * @param username El nombre de usuario.
+     * @return ResponseEntity con la información del usuario.
+     */
     @Secured({"ROLE_USER"})
     @GetMapping("user/{username}")
     public ResponseEntity<?> show(@PathVariable String username){
@@ -137,6 +164,14 @@ public class UserController {
         return new ResponseEntity<Usuario>(usuario, HttpStatus.OK);
     }
 
+    /**
+     * Actualiza la información de un usuario.
+     *
+     * @param usuario El usuario con la información actualizada.
+     * @param result  Resultado de la validación.
+     * @param id      El ID del usuario a actualizar.
+     * @return ResponseEntity con el resultado de la operación.
+     */
     @Secured("ROLE_USER")
     @PutMapping("{id}")
     public ResponseEntity<?> update(@Valid @RequestBody Usuario usuario,BindingResult result, @PathVariable Long id){

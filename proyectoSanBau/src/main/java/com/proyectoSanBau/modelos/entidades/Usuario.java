@@ -60,7 +60,7 @@ public class Usuario implements Serializable {
     private String CP;
 
 
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.DATE)  //Especifica que un campo de fecha debe ser tratado como una fecha (sin tiempo).
     private Date fechaRegistro;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
@@ -68,7 +68,7 @@ public class Usuario implements Serializable {
     private List<Rol> roles;
 
     @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
-    @JsonIgnoreProperties("usuario")
+    @JsonIgnoreProperties("usuario")   //para evitar problemas con la serialización/deserialización de propiedades relacionadas.
     private List<Venta> ventas;
 
 
