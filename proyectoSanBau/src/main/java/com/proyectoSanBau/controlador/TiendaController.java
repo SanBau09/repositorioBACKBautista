@@ -40,11 +40,23 @@ public class TiendaController {
     private IUsuarioService usuarioService;
 
 
+    /**
+     * Obtiene una lista de todos los artículos.
+     *
+     * @return lista de artículos
+     */
     @GetMapping("/articulos")
     public List<Articulo> index(){
         return articuloService.findAll();
     }
 
+    /**
+     * Crea un nuevo artículo con una imagen.
+     *
+     * @param archivo archivo de la imagen del artículo
+     * @param articulo JSON del artículo
+     * @return respuesta de la operación
+     */
     @Secured("ROLE_ADMIN")
     @PostMapping(value = "/articulos", consumes = {"multipart/form-data"})
     public ResponseEntity<?> create(@RequestParam("archivo") MultipartFile archivo, @RequestParam("articulo") String articulo){
@@ -80,6 +92,14 @@ public class TiendaController {
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
     }
 
+    /**
+     * Actualiza un artículo existente.
+     *
+     * @param articulo artículo con los nuevos datos
+     * @param result resultado de la validación
+     * @param id identificador del artículo a actualizar
+     * @return respuesta de la operación
+     */
     @Secured("ROLE_ADMIN")
     @PutMapping("/articulos/{id}")
     public ResponseEntity<?> update(@Valid @RequestBody Articulo articulo, BindingResult result, @PathVariable Long id){
@@ -125,7 +145,12 @@ public class TiendaController {
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
     }
 
-
+    /**
+     * Elimina un artículo.
+     *
+     * @param id identificador del artículo a eliminar
+     * @return respuesta de la operación
+     */
     @Secured("ROLE_ADMIN")
     @DeleteMapping("/articulos/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id){
@@ -144,6 +169,11 @@ public class TiendaController {
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
     }
 
+    /**
+     * Obtiene una lista de todas las categorías.
+     *
+     * @return lista de categorías
+     */
     @GetMapping("/categorias")
     public Set<Categoria> listarCategorias(){
         Set<Categoria> categorias = articuloService.findAllCategorias();
@@ -151,6 +181,13 @@ public class TiendaController {
         return categorias;
     }
 
+    /**
+     * Sube una imagen para un artículo.
+     *
+     * @param archivo archivo de la imagen
+     * @param id identificador del artículo
+     * @return respuesta de la operación
+     */
     @Secured({"ROLE_ADMIN","ROLE_USER"})
     @PostMapping("articulos/upload")
     public ResponseEntity<?> upload(@RequestParam("archivo")MultipartFile archivo, @RequestParam("id") Long id){
@@ -185,6 +222,12 @@ public class TiendaController {
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.CREATED);
     }
 
+    /**
+     * Obtiene una imagen subida.
+     *
+     * @param nombreFoto nombre del archivo de la imagen
+     * @return imagen como recurso
+     */
     @GetMapping("/uploads/img/{nombreFoto:.+}")
     public ResponseEntity<Resource> verFoto(@PathVariable String nombreFoto){
 
@@ -202,6 +245,12 @@ public class TiendaController {
         return new ResponseEntity<Resource>(recurso, cabecera, HttpStatus.OK);
     }
 
+    /**
+     * Crea un nuevo formato.
+     *
+     * @param formato formato a crear
+     * @return respuesta de la operación
+     */
     @Secured("ROLE_ADMIN")
     @PostMapping("/formatos")
     public ResponseEntity<?> createFormato(@RequestBody Formato formato){
@@ -219,6 +268,11 @@ public class TiendaController {
         }
     }
 
+    /**
+     * Obtiene una lista de todos los formatos.
+     *
+     * @return lista de formatos
+     */
     @GetMapping("/formatos")
     public List<Formato> listarFormatos(){
         List<Formato> formatos = formatoService.findAll();
@@ -226,6 +280,12 @@ public class TiendaController {
         return formatos;
     }
 
+    /**
+     * Elimina un formato.
+     *
+     * @param id identificador del formato a eliminar
+     * @return respuesta de la operación
+     */
     @Secured("ROLE_ADMIN")
     @DeleteMapping("/formatos/{id}")
     public ResponseEntity<?> deleteFormato(@PathVariable Long id){
@@ -242,6 +302,12 @@ public class TiendaController {
         return new ResponseEntity<Map<String, Object>>(response, HttpStatus.OK);
     }
 
+    /**
+     * Realiza una nueva venta.
+     *
+     * @param venta venta a realizar
+     * @return respuesta de la operación
+     */
     @Secured("ROLE_USER")
     @PostMapping("/venta")
     public ResponseEntity<?> createVenta(@RequestBody Venta venta){
@@ -261,6 +327,11 @@ public class TiendaController {
         }
     }
 
+    /**
+     * Obtiene una lista de todas las ventas.
+     *
+     * @return lista de ventas
+     */
     @Secured("ROLE_ADMIN")
     @GetMapping("/ventas")
     public List<Venta> listarVentas(){
